@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/charactercondiment/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/charactercondiment/static/js/main.f8b7fab0.chunk.js",
+    "main.js.map": "/charactercondiment/static/js/main.f8b7fab0.chunk.js.map",
+    "runtime-main.js": "/charactercondiment/static/js/runtime-main.ab542eb4.js",
+    "runtime-main.js.map": "/charactercondiment/static/js/runtime-main.ab542eb4.js.map",
+    "static/js/2.247a0768.chunk.js": "/charactercondiment/static/js/2.247a0768.chunk.js",
+    "static/js/2.247a0768.chunk.js.map": "/charactercondiment/static/js/2.247a0768.chunk.js.map",
+    "static/js/3.c5ede001.chunk.js": "/charactercondiment/static/js/3.c5ede001.chunk.js",
+    "static/js/3.c5ede001.chunk.js.map": "/charactercondiment/static/js/3.c5ede001.chunk.js.map",
+    "index.html": "/charactercondiment/index.html",
+    "static/css/main.6dea0f05.chunk.css.map": "/charactercondiment/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.247a0768.chunk.js.LICENSE.txt": "/charactercondiment/static/js/2.247a0768.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ab542eb4.js",
+    "static/js/2.247a0768.chunk.js",
+    "static/css/main.6dea0f05.chunk.css",
+    "static/js/main.f8b7fab0.chunk.js"
+  ]
+}
