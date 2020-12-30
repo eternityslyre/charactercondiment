@@ -6,9 +6,15 @@ import {
 
 export default class LjCard extends React.Component {
     render() {
-        return <Card>
+        const {children, isActive, onClick} = this.props;
+
+        return <Card onClick={onClick} style={{cursor: 'pointer'}}>
             <CardContent>
-                {this.props.children}
+                {
+                    isActive
+                        ? <span style={{fontWeight: '700'}}>{children}</span>
+                        : children
+                }
             </CardContent>
         </Card>
     }
