@@ -1,6 +1,31 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
 
+const MOVES = {
+  clickCell: (G, ctx, id) => {
+    if (G.cells[id] !== null) {
+      return INVALID_MOVE;
+    }
+    G.cells[id] = ctx.currentPlayer;
+  },
+  nextLetter: {
+    move: (G, ctx, playerID) => {
+      G.players[playerID].activeLetterIndex++;
+    },
+    noLimit: true,
+  },
+  sendMessage: {
+    move: (G, ctx, playerID, message) => {
+      console.log(message);
+      G.chat.push(playerID + ": " + message);
+    },
+    noLimit: true,
+  }
+}
+
 export const TicTacToe = {
+  name: 'TicTacToe',
+  minPlayers: 2,
+  maxPlayers: 8,
   setup: (ctx, setupData) => {
     return {
       cells: Array(9).fill(null),
@@ -27,34 +52,30 @@ export const TicTacToe = {
           currentLetter: 'Z',
           cardsLeft: 8,
         }
-      ]
+      ],
+      chat: [],
     };
   },
 
   turn: {
     moveLimit: 1,
-  },
-
-  moves: {
-    clickCell: (G, ctx, id) => {
-      if (G.cells[id] !== null) {
-        return INVALID_MOVE;
+    onBegin: (G, ctx) => {
+      ctx.events.setActivePlayers({currentPlayer: 'action', others: 'idle'});
+    },
+    stages: {
+      action: {
+        moves: {
+          clickCell: MOVES.clickCell,
+          nextLetter: MOVES.nextLetter,
+          sendMessage: MOVES.sendMessage,
+        }
+      },
+      idle: {
+        moves: {
+          nextLetter: MOVES.nextLetter,
+          sendMessage: MOVES.sendMessage,
+        }
       }
-      G.cells[id] = ctx.currentPlayer;
-    },
-    // Stubbed handler to process card clicks
-    clickCard: {
-      move: (G, ctx, id) => {
-        console.log('clickCard()');
-      },
-      noLimit: true,
-    },
-    // Handler for moving on to the next letter
-    nextLetter: {
-      move: (G, ctx, playerID) => {
-        G.players[playerID].activeLetterIndex++;
-      },
-      noLimit: true,
     }
   },
 

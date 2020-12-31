@@ -1,6 +1,7 @@
 import React from 'react';
 import LjCard from './LjCard';
 import { Button } from '@react-md/button';
+import Chat from './Chat';
 
 export class TicTacToeBoard extends React.Component {
   onClick = (id) => () => {
@@ -49,12 +50,7 @@ export class TicTacToeBoard extends React.Component {
   }
 
   render() {
-    const {ctx, G, moves: {clickCard}, playerID} = this.props;
-
-    // Show only the current player's board view
-    if (playerID !== ctx.currentPlayer) {
-      return <></>;
-    }
+    const {ctx, G} = this.props;
 
     let tbody = [];
     for (let i = 0; i < 3; i++) {
@@ -92,6 +88,7 @@ export class TicTacToeBoard extends React.Component {
           Next Letter
         </Button>
       </div>
+      <Chat {...this.props} />
     </>;
   }
 }
