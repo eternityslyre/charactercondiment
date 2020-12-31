@@ -1,61 +1,53 @@
-import { INVALID_MOVE } from 'boardgame.io/core';
+import _pullAt from 'lodash/pullAt';
+import Deck from './deck';
+import MOVES from './moves';
 
-const MOVES = {
-  clickCell: (G, ctx, id) => {
-    if (G.cells[id] !== null) {
-      return INVALID_MOVE;
-    }
-    G.cells[id] = ctx.currentPlayer;
-  },
-  nextLetter: {
-    move: (G, ctx, playerID) => {
-      G.players[playerID].activeLetterIndex++;
-    },
-    noLimit: true,
-  },
-  sendMessage: {
-    move: (G, ctx, playerName, message) => {
-      G.chat.push({
-        id: playerName,
-        msg: message
-      })
-    },
-    noLimit: true,
-  }
-}
+const NUM_DRAW_PILES = 3;
+const NUM_PLAYERS = 2;
+const CARDS_PER_PLAYER = 5;
+
+// 4 players -> 7, 8
 
 export const TicTacToe = {
   name: 'TicTacToe',
   minPlayers: 2,
-  maxPlayers: 8,
+  maxPlayers: 6,
   setup: (ctx, setupData) => {
-    console.log('setup()');
+    let deck = Deck.init();
+
+    // Draw one card for each of the non-player letters
+    // No need for separate drawPile decks as long as we maintain the number of cards in each drawPile.
+    let drawPiles = [];
+    for (let i = 0; i < NUM_DRAW_PILES; i++) {
+      let {card, newDeck} = Deck.draw(deck);
+      deck = newDeck;
+      drawPiles.push({currentLetter: card, cardLeft: 8});
+    }
+
+    // Deal randomized 5-card hand to each player
+    // TODO -- let players pick hands for each other
+    let players = {};
+    for (let i = 0; i < NUM_PLAYERS; i++) {
+      let letters = [];
+      for (let j = 0; j < CARDS_PER_PLAYER; j++) {
+        let {card, newDeck} = Deck.draw(deck);
+        deck = newDeck;
+        letters.push(card);
+      }
+      players[i] = {
+        activeLetterIndex: 0,
+        letters,
+      };
+    }
+
+    console.log(players);
+    console.log(deck.length);
+
     return {
       cells: Array(9).fill(null),
-      players: {
-        0: {
-          activeLetterIndex: 0,
-          letters: ['A', 'S', 'D', 'F']
-        },
-        1: {
-          activeLetterIndex: 0,
-          letters: ['Q', 'W', 'E', 'R', 'T', 'Y']
-        }
-      },
-      // Build the deck here. No need for separate drawPile decks as long as we maintain the number of cards in each drawPile.
-      deck: [],
-      drawPiles: [
-        {
-          currentLetter: 'X',
-          cardsLeft: 8,
-        },{
-          currentLetter: 'Y',
-          cardsLeft: 8,
-        },{
-          currentLetter: 'Z',
-          cardsLeft: 8,
-        }
-      ],
+      players,
+      deck,
+      drawPiles,
       chat: [],
     };
   },

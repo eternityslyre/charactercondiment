@@ -95,7 +95,7 @@ const Room = (props) => {
     // don't include lobby because game doesn't show game title, game credits... it's fullscreen.
     return (
       <CoupClient
-        gameID={id}
+        matchID={id}
         numPlayers={players.length}
         playerID={localStorage.getItem("id")}
         credentials={localStorage.getItem("credentials")}
