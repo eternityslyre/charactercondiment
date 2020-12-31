@@ -107,11 +107,9 @@ const Room = (props) => {
         <span className="title room-title">Room</span>
         <div className="players-list">
           {players.map((player) => {
-            if (player.name) {
-              return player.name + `${player.name === localStorage.getItem("name") ? " (You)" : ""}\n`;
-            } else {
-              return "...\n";
-            }
+              return player.name
+                ? player.name + `${player.name === localStorage.getItem("name") ? " (You)" : ""}\n`
+                : "...\n";
           })}
         </div>
         <div className="room-info-area">

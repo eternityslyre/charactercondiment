@@ -1,5 +1,6 @@
 import React from 'react';
 import {TextField} from '@react-md/form';
+import {Chip} from '@react-md/chip';
 
 export default class Chat extends React.Component {
     constructor(props) {
@@ -21,11 +22,23 @@ export default class Chat extends React.Component {
     }
 
     render() {
-        return <div>
+        return <div style={{flex: '1 1 0'}}>
             <div>
-                {this.props.G.chat.map((msg) => <div>{msg}</div>)}
+                {this.props.G.chat.map((msg) => <ChatMessage senderId={msg.id} message={msg.msg} />)}
             </div>
             <TextField id="chat-entry" theme="outline" onChange={this.handleChange} onKeyUp={this.handleKeyUp} value={this.state.message} />
         </div>;
     }
+}
+
+const ChatMessage = (props) => {
+    let style = props.senderId === localStorage.getItem('name')
+        ? {width: '100%', textAlign: 'right'}
+        : {width: '100%', textAlign: 'left'}
+    
+    return <div style={style}>
+        <Chip>
+            {props.senderId + ': ' + props.message}
+        </Chip>
+    </div>
 }

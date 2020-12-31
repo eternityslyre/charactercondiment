@@ -14,9 +14,11 @@ const MOVES = {
     noLimit: true,
   },
   sendMessage: {
-    move: (G, ctx, playerID, message) => {
-      console.log(message);
-      G.chat.push(playerID + ": " + message);
+    move: (G, ctx, playerName, message) => {
+      G.chat.push({
+        id: playerName,
+        msg: message
+      })
     },
     noLimit: true,
   }
@@ -27,6 +29,7 @@ export const TicTacToe = {
   minPlayers: 2,
   maxPlayers: 8,
   setup: (ctx, setupData) => {
+    console.log('setup()');
     return {
       cells: Array(9).fill(null),
       players: {

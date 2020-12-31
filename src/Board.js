@@ -66,7 +66,8 @@ export class TicTacToeBoard extends React.Component {
       tbody.push(<tr key={i}>{cells}</tr>);
     }
 
-    return <>
+    return <div style={{display: 'flex'}}>
+      <div style={{flex: '3 1 0'}}>
       <div>
         <table id="board">
           <tbody>{tbody}</tbody>
@@ -88,7 +89,8 @@ export class TicTacToeBoard extends React.Component {
           Next Letter
         </Button>
       </div>
+      </div>
       <Chat {...this.props} />
-    </>;
+    </div>;
   }
 }

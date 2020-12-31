@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Lobby from "./Lobby";
 import { LobbyAPI } from "./LobbyApi";
 import "./home.scss";
+import {Button} from '@react-md/button';
 
 const api = new LobbyAPI(); 
 
@@ -70,7 +71,6 @@ const Home = (props) => {
           history.push("/rooms/" + roomID);
         });
       } else {
-          console.log("Error: name already taken!");
         // handle name conflict error
         setErrMsg("name already taken!");
         setJName("");
@@ -127,13 +127,12 @@ const Home = (props) => {
           className="input-field"
         />
       </div>
-      <button
-        className="lobby-btn"
+      <Button
         disabled={room.length !== roomIDLength || jName.length === 0}
         onClick={() => joinRoom(room, jName)}
       >
-        join
-      </button>
+          Join
+      </Button>
       <div className="error-msg">{errMsg}</div>
       <span className="title create-title">create lobby</span>
       <div className="input-info-area">
@@ -164,9 +163,7 @@ const Home = (props) => {
           className="input-field"
         />
       </div>
-      <button className="lobby-btn" disabled={cName.length === 0} onClick={createRoom}>
-        create
-      </button>
+      <Button disabled={cName.length === 0} onClick={createRoom} theme="primary" themeType="contained">Create</Button>
     </Lobby>
   );
 };
