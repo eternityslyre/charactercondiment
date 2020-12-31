@@ -13,13 +13,6 @@ export class TicTacToeBoard extends React.Component {
         return localStorage.getItem('id');
     }
 
-    get gameOverText() {
-        const {winner} = this.props.ctx.gameover;
-        return winner !== undefined
-            ? `Winner: ${winner}`
-            : `Draw!`;
-    }
-
     get isActivePlayer() {
         return this.playerId == this.activePlayer;
     }

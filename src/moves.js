@@ -1,12 +1,4 @@
-import { INVALID_MOVE } from 'boardgame.io/core';
-
 const MOVES = {
-    clickCell: (G, ctx, id) => {
-        if (G.cells[id] !== null) {
-            return INVALID_MOVE;
-        }
-        G.cells[id] = ctx.currentPlayer;
-    },
     deselectCard: {
         move: (G, ctx, card) => {
             let lastClue = G.clue[G.clue.length - 1];
