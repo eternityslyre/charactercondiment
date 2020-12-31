@@ -32,6 +32,7 @@ export const TicTacToe = {
       for (let j = 0; j < CARDS_PER_PLAYER; j++) {
         let {card, newDeck} = Deck.draw(deck);
         deck = newDeck;
+        card.owner = i;
         letters.push(card);
       }
       players[i] = {
@@ -45,6 +46,7 @@ export const TicTacToe = {
 
     return {
       cells: Array(9).fill(null),
+      clue: [],
       players,
       deck,
       drawPiles,
@@ -61,7 +63,9 @@ export const TicTacToe = {
       action: {
         moves: {
           clickCell: MOVES.clickCell,
+          deselectCard: MOVES.deselectCard,
           nextLetter: MOVES.nextLetter,
+          selectCard: MOVES.selectCard,
           sendMessage: MOVES.sendMessage,
         }
       },

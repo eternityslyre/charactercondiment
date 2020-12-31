@@ -7,9 +7,21 @@ const MOVES = {
         }
         G.cells[id] = ctx.currentPlayer;
     },
+    deselectCard: {
+        move: (G, ctx, playerID, card) => {
+
+        },
+        noLimit: true,
+    },
     nextLetter: {
         move: (G, ctx, playerID) => {
             G.players[playerID].activeLetterIndex++;
+        },
+        noLimit: true,
+    },
+    selectCard: {
+        move: (G, ctx, card) => {
+            G.clue.push(card);
         },
         noLimit: true,
     },

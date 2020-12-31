@@ -30,8 +30,9 @@ export class TicTacToeBoard extends React.Component {
 
     // }
 
-    handleSelectCard = () => {
-
+    handleSelectCard = (card) => () => {
+        console.log(card);
+        this.props.moves.selectCard(card);
     }
 
     handleNextLetter = () => {
@@ -59,16 +60,18 @@ export class TicTacToeBoard extends React.Component {
             <div style={{flex: '3 1 0'}}>
                 <div>
                     <div>Visible cards</div>
-                    {this.visibleCards.map((card) => <LjCard>{card.letter}</LjCard>)}
+                    {this.visibleCards.map((card) => <LjCard onClick={this.handleSelectCard(card)}>{card.letter}</LjCard>)}
                 </div>
-                {
-                    ctx.currentPlayer === localStorage.getItem('id') && (
                         <div>
                             <div>Clue</div>
-
+                            {
+                                G.clue.map((card) => (
+                                    card.owner == localStorage.getItem('id')
+                                        ? <LjCard>?</LjCard>
+                                        : <LjCard>{card.letter}</LjCard>
+                                ))
+                            }
                         </div>
-                    )
-                }
                 <div>
                     <Button
                         id="btn1"
