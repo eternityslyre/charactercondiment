@@ -2,11 +2,21 @@ import _pullAt from 'lodash/pullAt';
 import Deck from './deck';
 import MOVES from './moves';
 
-const NUM_DRAW_PILES = 3;
 const NUM_PLAYERS = 2;
 const CARDS_PER_PLAYER = 5;
 
 // 4 players -> 7, 8
+const getDrawPileSpecs = (numPlayers) => {
+    let drawPileConfig = [
+        [],[],
+        [7, 8, 9, 10],
+        [7, 8, 9, 10],
+        [7, 8],
+        [7],
+        []
+    ];
+    return drawPileConfig[numPlayers];
+}
 
 export const TicTacToe = {
     name: 'TicTacToe',
@@ -18,11 +28,12 @@ export const TicTacToe = {
         // Draw one card for each of the non-player letters
         // No need for separate drawPile decks as long as we maintain the number of cards in each drawPile.
         let drawPiles = [];
-        for (let i = 0; i < NUM_DRAW_PILES; i++) {
+        let drawPileSpecs = getDrawPileSpecs(NUM_PLAYERS);
+        drawPileSpecs.forEach((drawPile) => {
             let {card, newDeck} = Deck.draw(deck);
             deck = newDeck;
-            drawPiles.push({currentLetter: card, cardLeft: 8});
-        }
+            drawPiles.push({currentLetter: card, cardsLeft: drawPile - 1});
+        });
 
         // Deal randomized 5-card hand to each player
         // TODO -- let players pick hands for each other
@@ -47,6 +58,7 @@ export const TicTacToe = {
         return {
             cells: Array(9).fill(null),
             clue: [],
+            clues: [],
             players,
             deck,
             drawPiles,
@@ -65,11 +77,19 @@ export const TicTacToe = {
                     nextLetter: MOVES.nextLetter,
                     selectCard: MOVES.selectCard,
                     sendMessage: MOVES.sendMessage,
+                    submitClue: MOVES.submitClue,
                 }
             },
+            // These are the non-active players
             idle: {
                 moves: {
                     nextLetter: MOVES.nextLetter,
+                    sendMessage: MOVES.sendMessage,
+                }
+            },
+            // This is the player state where they are ready for the next turn.
+            ready: {
+                moves: {
                     sendMessage: MOVES.sendMessage,
                 }
             }
@@ -81,16 +101,5 @@ export const TicTacToe = {
     },
     endIf: (G, ctx) => {
 
-    },
-    ai: {
-        enumerate: (G, ctx) => {
-            let moves = [];
-            for (let i = 0; i < 9; i++) {
-                if (G.cells[i] === null) {
-                    moves.push({ move: 'clickCell', args: [i] });
-                }
-            }
-            return moves;
-        },
     },
 };

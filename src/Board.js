@@ -3,6 +3,7 @@ import LjCard from './LjCard';
 import { Button } from '@react-md/button';
 import Chat from './Chat';
 import Deck from './deck';
+import ClueSheet from './ClueSheet';
 
 export class TicTacToeBoard extends React.Component {
     get activePlayer() {
@@ -42,6 +43,10 @@ export class TicTacToeBoard extends React.Component {
         this.props.moves.nextLetter(this.props.ctx.currentPlayer);
     }
 
+    submitClue = () => {
+        this.props.moves.submitClue(this.playerId);
+    }
+
     // TODO
     get isNextLetterDisabled() {
         const {ctx, G} = this.props;
@@ -65,6 +70,7 @@ export class TicTacToeBoard extends React.Component {
             handleNextLetter,
             handleSelectCard,
             playerId,
+            submitClue,
             visibleCards,
         } = this;
 
@@ -90,6 +96,7 @@ export class TicTacToeBoard extends React.Component {
                             ))
                         )
                     }
+                    <Button id="btn-clue-submit" theme="primary" themeType="contained" onClick={submitClue}>Submit Clue</Button>
                 </div>
                 <div>
                     <Button
@@ -101,6 +108,9 @@ export class TicTacToeBoard extends React.Component {
                     >
                         Next Letter
                     </Button>
+                </div>
+                <div>
+                    <ClueSheet G={G} />
                 </div>
             </div>
             <Chat {...this.props} />
