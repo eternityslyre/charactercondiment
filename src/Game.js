@@ -52,11 +52,7 @@ export const TicTacToe = {
             };
         }
 
-        console.log(players);
-        console.log(deck.length);
-
         return {
-            cells: Array(9).fill(null),
             clue: [],
             clues: [],
             players,
@@ -71,6 +67,7 @@ export const TicTacToe = {
             ctx.events.setActivePlayers({currentPlayer: 'action', others: 'idle'});
         },
         stages: {
+            // Stage for the active player
             action: {
                 moves: {
                     deselectCard: MOVES.deselectCard,
@@ -84,6 +81,7 @@ export const TicTacToe = {
             idle: {
                 moves: {
                     nextLetter: MOVES.nextLetter,
+                    pass: MOVES.pass,
                     sendMessage: MOVES.sendMessage,
                 }
             },
