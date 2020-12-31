@@ -5,8 +5,12 @@ import Chat from './Chat';
 import Deck from './deck';
 
 export class TicTacToeBoard extends React.Component {
-    onClick = (id) => () => {
-        this.props.moves.clickCell(id);
+    get activePlayer() {
+        return this.props.ctx.currentPlayer;
+    }
+
+    get playerId() {
+        return localStorage.getItem('id');
     }
 
     get gameOverText() {
@@ -16,22 +20,28 @@ export class TicTacToeBoard extends React.Component {
             : `Draw!`;
     }
 
+    get isActivePlayer() {
+        return this.playerId == this.activePlayer;
+    }
+
     get visibleCards() {
         const {ctx, G} = this.props;
         const common = G.drawPiles.map((pile) => pile.currentLetter);
         const otherPlayers = Object.keys(G.players)
-            .filter((key) => `${key}` !== localStorage.getItem('id'))
+            .filter((key) => `${key}` !== this.playerId)
             .map((key) => G.players[key].letters[G.players[key].activeLetterIndex]);
 
         return [Deck.WILD, ...common, ...otherPlayers];
     }
 
-    // handleCardClick = () => {
-
-    // }
+    handleDeselectCard = (card) => () => {
+        const {G: clue, moves} = this.props;
+        if (clue[clue.length-1].id === card.id) {
+            moves.deselectCard(card);
+        }
+    }
 
     handleSelectCard = (card) => () => {
-        console.log(card);
         this.props.moves.selectCard(card);
     }
 
@@ -55,30 +65,46 @@ export class TicTacToeBoard extends React.Component {
 
     render() {
         const {ctx, G} = this.props;
+        const {
+            isActivePlayer,
+            isNextLetterDisabled,
+            handleDeselectCard,
+            handleNextLetter,
+            handleSelectCard,
+            playerId,
+            visibleCards,
+        } = this;
 
         return <div style={{display: 'flex'}}>
             <div style={{flex: '3 1 0'}}>
                 <div>
                     <div>Visible cards</div>
-                    {this.visibleCards.map((card) => <LjCard onClick={this.handleSelectCard(card)}>{card.letter}</LjCard>)}
+                    {visibleCards.map((card) => <LjCard onClick={handleSelectCard(card)}>{card.letter}</LjCard>)}
                 </div>
-                        <div>
-                            <div>Clue</div>
-                            {
-                                G.clue.map((card) => (
-                                    card.owner == localStorage.getItem('id')
-                                        ? <LjCard>?</LjCard>
-                                        : <LjCard>{card.letter}</LjCard>
-                                ))
-                            }
-                        </div>
+                <div>
+                    <div>Clue</div>
+                    {
+                        isActivePlayer && (
+                            G.clue.map((card) => <LjCard onClick={handleDeselectCard(card)}>{card.letter}</LjCard>)
+                        )
+                    }
+                    {
+                        !isActivePlayer && (
+                            G.clue.map((card) => (
+                                card.owner == playerId
+                                    ? <LjCard>?</LjCard>
+                                    : <LjCard>{card.letter}</LjCard>
+                            ))
+                        )
+                    }
+                </div>
                 <div>
                     <Button
                         id="btn1"
                         theme="primary"
                         themeType="contained"
-                        onClick={this.handleNextLetter}
-                        disabled={this.isNextLetterDisabled}
+                        onClick={handleNextLetter}
+                        disabled={isNextLetterDisabled}
                     >
                         Next Letter
                     </Button>

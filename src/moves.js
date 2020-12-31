@@ -8,8 +8,11 @@ const MOVES = {
         G.cells[id] = ctx.currentPlayer;
     },
     deselectCard: {
-        move: (G, ctx, playerID, card) => {
-
+        move: (G, ctx, card) => {
+            let lastClue = G.clue[G.clue.length - 1];
+            if (lastClue.id === card.id) {
+                G.clue.pop();   
+            }
         },
         noLimit: true,
     },

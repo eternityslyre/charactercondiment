@@ -15,7 +15,6 @@ const addToDeck = (deck, letter, number) => {
 };
 
 const Deck = {
-
     init: () => {
         let deck = [];
         deck = addToDeck(deck, 'A', 4);
@@ -39,7 +38,6 @@ const Deck = {
         deck = addToDeck(deck, 'U', 3);
         deck = addToDeck(deck, 'W', 2);
         deck = addToDeck(deck, 'Y', 2);
-        console.log(deck.length);
         return deck;
     },
     draw: (deck) => {
