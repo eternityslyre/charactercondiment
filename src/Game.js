@@ -1,7 +1,35 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
 
 export const TicTacToe = {
-  setup: () => ({ cells: Array(9).fill(null) }),
+  setup: (ctx, setupData) => {
+    return {
+      cells: Array(9).fill(null),
+      players: {
+        0: {
+          activeLetterIndex: 0,
+          letters: ['A', 'S', 'D', 'F']
+        },
+        1: {
+          activeLetterIndex: 0,
+          letters: ['Q', 'W', 'E', 'R', 'T', 'Y']
+        }
+      },
+      // Build the deck here. No need for separate drawPile decks as long as we maintain the number of cards in each drawPile.
+      deck: [],
+      drawPiles: [
+        {
+          currentLetter: 'X',
+          cardsLeft: 8,
+        },{
+          currentLetter: 'Y',
+          cardsLeft: 8,
+        },{
+          currentLetter: 'Z',
+          cardsLeft: 8,
+        }
+      ]
+    };
+  },
 
   turn: {
     moveLimit: 1,
@@ -14,6 +42,25 @@ export const TicTacToe = {
       }
       G.cells[id] = ctx.currentPlayer;
     },
+    // Stubbed handler to process card clicks
+    clickCard: {
+      move: (G, ctx, id) => {
+        console.log('clickCard()');
+      },
+      noLimit: true,
+    },
+    // Handler for moving on to the next letter
+    nextLetter: {
+      move: (G, ctx, playerID) => {
+        G.players[playerID].activeLetterIndex++;
+      },
+      noLimit: true,
+    }
+  },
+
+  // TODO -- return sanitized game state for the active player
+  playerView: (G, ctx, playerID) => {
+    return G;
   },
 
   endIf: (G, ctx) => {

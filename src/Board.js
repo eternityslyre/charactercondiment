@@ -1,5 +1,6 @@
 import React from 'react';
 import LjCard from './LjCard';
+import { Button } from '@react-md/button';
 
 export class TicTacToeBoard extends React.Component {
   onClick = (id) => () => {
@@ -21,8 +22,39 @@ export class TicTacToeBoard extends React.Component {
       : `Draw!`;
   }
 
-  render() {
+  get visibleCards() {
     const {ctx, G} = this.props;
+    const common = G.drawPiles.map((pile) => pile.currentLetter);
+    const otherPlayers = Object.keys(G.players)
+      .filter((key) => `${key}` !== ctx.currentPlayer)
+      .map((key) => G.players[key].letters[G.players[key].activeLetterIndex]);
+
+    return [...common, ...otherPlayers];
+  }
+
+  handleNextLetter = () => {
+    this.props.moves.nextLetter(this.props.ctx.currentPlayer);
+  }
+
+  // TODO
+  get isNextLetterDisabled() {
+    const {ctx, G} = this.props;
+    // G.players[ctx.currentPlayer].letters.length;
+    return false;
+  }
+
+  get activePlayerCards() {
+    const {G, playerID} = this.props;
+    return G.players[playerID].letters.map((letter, index) => <LjCard isActive={index === G.players[playerID].activeLetterIndex}>{letter}</LjCard>);
+  }
+
+  render() {
+    const {ctx, G, moves: {clickCard}, playerID} = this.props;
+
+    // Show only the current player's board view
+    if (playerID !== ctx.currentPlayer) {
+      return <></>;
+    }
 
     let tbody = [];
     for (let i = 0; i < 3; i++) {
@@ -46,14 +78,19 @@ export class TicTacToeBoard extends React.Component {
         {ctx.gameover && <div id="winner">{this.gameOverText}</div>}
       </div>
       <div>
-        <LjCard>A</LjCard>
-        <LjCard>B</LjCard>
-        <LjCard>C</LjCard>
-        <LjCard />
-        <LjCard>1</LjCard>
-        <LjCard>2</LjCard>
-        <LjCard>3</LjCard>
-        <LjCard>asdfasfjsal</LjCard>
+        <div>Visible cards</div>
+        {this.visibleCards.map((letter) => <LjCard>{letter}</LjCard>)}
+      </div>
+      <div>
+        <Button
+          id="btn1"
+          theme="primary"
+          themeType="contained"
+          onClick={this.handleNextLetter}
+          disabled={this.isNextLetterDisabled}
+        >
+          Next Letter
+        </Button>
       </div>
     </>;
   }
