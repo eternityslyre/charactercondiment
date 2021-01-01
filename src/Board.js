@@ -3,6 +3,7 @@ import LjCard from './LjCard';
 import { Button } from '@react-md/button';
 import Chat from './Chat';
 import Deck from './deck';
+import ClueSheet from './ClueSheet';
 
 export class TicTacToeBoard extends React.Component {
     get activePlayer() {
@@ -28,19 +29,19 @@ export class TicTacToeBoard extends React.Component {
     }
 
     handleDeselectCard = (card) => () => {
-        const {G: clue, moves} = this.props;
+        const {G: {clue}, moves} = this.props;
         if (clue[clue.length-1].id === card.id) {
             moves.deselectCard(card);
         }
     }
 
-    handleSelectCard = (card) => () => {
-        this.props.moves.selectCard(card);
-    }
+    handlePass = () => this.props.moves.pass();
 
-    handleNextLetter = () => {
-        this.props.moves.nextLetter(this.props.ctx.currentPlayer);
-    }
+    handleSelectCard = (card) => () => this.props.moves.selectCard(card);
+
+    handleNextLetter = () => this.props.moves.nextLetter(this.props.ctx.currentPlayer);
+
+    submitClue = () => this.props.moves.submitClue(this.playerId);
 
     // TODO
     get isNextLetterDisabled() {
@@ -63,8 +64,10 @@ export class TicTacToeBoard extends React.Component {
             isNextLetterDisabled,
             handleDeselectCard,
             handleNextLetter,
+            handlePass,
             handleSelectCard,
             playerId,
+            submitClue,
             visibleCards,
         } = this;
 
@@ -90,6 +93,7 @@ export class TicTacToeBoard extends React.Component {
                             ))
                         )
                     }
+                    <Button id="btn-clue-submit" theme="primary" themeType="contained" onClick={submitClue}>Submit Clue</Button>
                 </div>
                 <div>
                     <Button
@@ -101,6 +105,19 @@ export class TicTacToeBoard extends React.Component {
                     >
                         Next Letter
                     </Button>
+                </div>
+                <div>
+                    <Button
+                        id="btn-pass"
+                        theme="primary"
+                        themeType="contained"
+                        onClick={handlePass}
+                    >
+                        Pass
+                    </Button>
+                </div>
+                <div>
+                    <ClueSheet G={G} />
                 </div>
             </div>
             <Chat {...this.props} />
