@@ -1,6 +1,8 @@
 import React from 'react';
 import LjCard from './LjCard';
 import { Button } from '@react-md/button';
+import ReactCardFlip from 'react-card-flip';
+import { ReactSortable } from "react-sortablejs";
 import Chat from './Chat';
 import Deck from './deck';
 import ClueSheet from './ClueSheet';
@@ -78,7 +80,13 @@ export class TicTacToeBoard extends React.Component {
                     {visibleCards.map((card) => <LjCard onClick={handleSelectCard(card)}>{card.letter}</LjCard>)}
                 </div>
                 <div>
+                    <div>Your cards</div>
+                    <Hand />
+                </div>
+                <div>
                     <div>Clue</div>
+                    <div>{isActivePlayer && ("You're up!")}</div>
+                    <div>{!isActivePlayer && ("Waiting for player "+this.activePlayer)}</div>
                     {
                         isActivePlayer && (
                             G.clue.map((card) => <LjCard onClick={handleDeselectCard(card)}>{card.letter}</LjCard>)
@@ -124,3 +132,73 @@ export class TicTacToeBoard extends React.Component {
         </div>;
     }
 }
+class Hand extends React.Component {
+    constructor(props) {
+      super();
+        this.state = {
+          items: [
+            {id: 1, name: "a"},
+            {id: 2, name: "b"},
+            {id: 3, name: "c"},
+            {id: 4, name: "d"},
+            {id: 5, name: "e"},
+            {id: 6, name: "f"},
+          ]
+        };
+    }
+  
+    stringState (list) {
+      let output = "[";
+      for (const item in list) {
+        output += list[item].name+",";
+      }
+      return output+"]";
+    }
+  
+    updateList = (newList) => {
+      this.setState({items:newList});
+    }
+   
+    render(){
+      return (
+        <ReactSortable
+          list={this.state.items}
+          setList={this.updateList}
+          direction='horizontal'
+          >
+          {this.state.items.map((item) => (
+            <Card key={item.id} text={item.name} />
+          ))}
+        </ReactSortable>
+      )
+    }
+  }
+  
+  class Card extends React.Component{
+    constructor(props) {
+      super();
+        this.state = {
+        isFlipped: false,
+        text: props.text
+      };
+      this.handleClick = this.handleClick.bind(this);
+    }
+   
+    handleClick(e) {
+      e.preventDefault();
+      this.setState(prevState => ({ isFlipped: !prevState.isFlipped }));
+    }
+    render(){
+      return (
+        <ReactCardFlip isFlipped={this.state.isFlipped} flipDirection="horizontal">
+        <div onClick={this.handleClick} className="CardFront">
+            <LjCard>{this.state.text}</LjCard>
+        </div>
+  
+        <div onClick={this.handleClick} className="CardBack">
+            <LjCard>?</LjCard>
+        </div>
+        </ReactCardFlip>
+      )
+    }
+  }
