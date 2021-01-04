@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import LjCard from './LjCard';
 import { Button } from '@react-md/button';
 import ReactCardFlip from 'react-card-flip';
@@ -6,7 +6,37 @@ import { ReactSortable } from "react-sortablejs";
 import Chat from './Chat';
 import Deck from './deck';
 import ClueSheet from './ClueSheet';
+import {SortableContainer, SortableElement} from 'react-sortable-hoc';
+import arrayMove from 'array-move';
 
+const SortableItem = SortableElement(({value}) => (
+    <li style={{display:"inline-block"}}><Card text={value}/></li>
+    //<li style={{display:"inline"}} tabIndex={0}>{value}</li>
+  ));
+
+const SortableList = SortableContainer(({items}) => {
+return (
+  <ul style={{display:"inline-block"}}>
+    {items.map((value, index) => (
+      <SortableItem key={`item-${value}`} index={index} value={value} />
+    ))}
+  </ul>
+);
+});
+
+class SortableComponent extends Component {
+state = {
+  items: ['A', 'B', 'C', 'D', 'E'],
+};
+onSortEnd = ({oldIndex, newIndex}) => {
+  this.setState(({items}) => ({
+    items: arrayMove(items, oldIndex, newIndex),
+  }));
+};
+render() {
+  return <SortableList axis="x" items={this.state.items} onSortEnd={this.onSortEnd} />;
+}
+}
 export class TicTacToeBoard extends React.Component {
     get activePlayer() {
         return this.props.ctx.currentPlayer;
@@ -81,7 +111,7 @@ export class TicTacToeBoard extends React.Component {
                 </div>
                 <div>
                     <div>Your cards</div>
-                    <Hand />
+                    <SortableComponent />
                 </div>
                 <div>
                     <div>Clue</div>
@@ -164,10 +194,12 @@ class Hand extends React.Component {
         <ReactSortable
           list={this.state.items}
           setList={this.updateList}
+          className='row'
           direction='horizontal'
           >
           {this.state.items.map((item) => (
-            <Card key={item.id} text={item.name} />
+            <LjCard>{item.name}</LjCard>
+            //<Card margin="2px" max-width="50px" key={item.id} text={item.name} />
           ))}
         </ReactSortable>
       )
@@ -190,8 +222,8 @@ class Hand extends React.Component {
     }
     render(){
       return (
-        <ReactCardFlip isFlipped={this.state.isFlipped} flipDirection="horizontal">
-        <div onClick={this.handleClick} className="CardFront">
+        <ReactCardFlip containerStyle={{"max-width":"50px","margin":"2px","width":"50px"}} isFlipped={this.state.isFlipped} flipDirection="horizontal">
+        <div width="50px" onClick={this.handleClick} className="CardFront">
             <LjCard>{this.state.text}</LjCard>
         </div>
   
