@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import LjCard from './LjCard';
 import { Button } from '@react-md/button';
 import ReactCardFlip from 'react-card-flip';
-import { ReactSortable } from "react-sortablejs";
 import Chat from './Chat';
 import Deck from './deck';
 import ClueSheet from './ClueSheet';
@@ -38,7 +37,7 @@ class SortableComponent extends Component {
             items: arrayMove(items, oldIndex, newIndex),
         }));
     };
-    
+
     render() {
         return <SortableList axis="x" items={this.state.items} onSortEnd={this.onSortEnd} />;
     }
@@ -59,12 +58,15 @@ export class TicTacToeBoard extends React.Component {
 
     get cardDisplays() {
         const {ctx, G} = this.props;
+
         const common = G.drawPiles.map((pile) => <CardDisplay
-            card={pile.currentLetter}
-            onClick={this.handleSelectCard(pile.currentLetter)}
-            player={{name: 'Extra'}}
-            playerInfo={{activeLetterIndex: -1, letters: []}}
-        />);
+                card={pile.currentLetter}
+                onClick={this.handleSelectCard(pile.currentLetter)}
+                player={{name: 'Extra'}}
+                playerInfo={{activeLetterIndex: -1, letters: []}}
+            />
+        );
+
         const otherPlayers = Object.keys(G.players)
             .filter((key) => `${key}` !== this.playerId)
             .map((key) => {
@@ -153,8 +155,8 @@ export class TicTacToeBoard extends React.Component {
                 </div>
                 <div>
                     <div>Clue</div>
-                    <div>{isActivePlayer && ("You're up!")}</div>
-                    <div>{!isActivePlayer && ("Waiting for player "+this.activePlayer)}</div>
+                    <div>{isActivePlayer && `You're up!`}</div>
+                    <div>{!isActivePlayer && `Waiting for player ${this.activePlayer}`}</div>
                     {
                         isActivePlayer && (
                             G.clue.map((card) => <LjCard onClick={handleDeselectCard(card)}>{card.letter}</LjCard>)
@@ -216,75 +218,36 @@ class CardDisplay extends React.Component {
     }
 }
 
-class Hand extends React.Component {
+class Card extends React.Component{
     constructor(props) {
-      super();
+        super(props);
         this.state = {
-          items: [
-            {id: 1, name: "a"},
-            {id: 2, name: "b"},
-            {id: 3, name: "c"},
-            {id: 4, name: "d"},
-            {id: 5, name: "e"},
-            {id: 6, name: "f"},
-          ]
+            isFlipped: false,
+            text: props.text,
         };
     }
-  
-    stringState (list) {
-      let output = "[";
-      for (const item in list) {
-        output += list[item].name+",";
-      }
-      return output+"]";
-    }
-  
-    updateList = (newList) => {
-      this.setState({items:newList});
-    }
    
-    render(){
-      return (
-        <ReactSortable
-          list={this.state.items}
-          setList={this.updateList}
-          className='row'
-          direction='horizontal'
-          >
-          {this.state.items.map((item) => (
-            <LjCard>{item.name}</LjCard>
-            //<Card margin="2px" max-width="50px" key={item.id} text={item.name} />
-          ))}
-        </ReactSortable>
-      )
+    handleClick = (e) => {
+        e.preventDefault();
+        this.setState(prevState => ({ isFlipped: !prevState.isFlipped }));
     }
-  }
 
-  class Card extends React.Component{
-    constructor(props) {
-      super();
-        this.state = {
-        isFlipped: false,
-        text: props.text
-      };
-      this.handleClick = this.handleClick.bind(this);
-    }
-   
-    handleClick(e) {
-      e.preventDefault();
-      this.setState(prevState => ({ isFlipped: !prevState.isFlipped }));
-    }
     render(){
-      return (
-        <ReactCardFlip containerStyle={{"max-width":"50px","margin":"2px","width":"50px"}} isFlipped={this.state.isFlipped} flipDirection="horizontal">
-        <div width="50px" onClick={this.handleClick} className="CardFront">
-            <LjCard>{this.state.text}</LjCard>
-        </div>
-  
-        <div onClick={this.handleClick} className="CardBack">
-            <LjCard>?</LjCard>
-        </div>
-        </ReactCardFlip>
-      )
+        const {handleClick, state: {isFlipped, text}} = this;
+
+        return (
+            <ReactCardFlip
+                containerStyle={{"max-width":"50px","margin":"2px","width":"50px"}}
+                isFlipped={isFlipped}
+                flipDirection="horizontal"
+            >
+                <div width="50px" onClick={handleClick} className="CardFront">
+                    <LjCard>{text}</LjCard>
+                </div>
+                <div onClick={handleClick} className="CardBack">
+                    <LjCard>?</LjCard>
+                </div>
+            </ReactCardFlip>
+        )
     }
-  }
+}
