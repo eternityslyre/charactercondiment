@@ -8,35 +8,42 @@ import Deck from './deck';
 import ClueSheet from './ClueSheet';
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import arrayMove from 'array-move';
+import _isFinite from 'lodash/isFinite';
 
 const SortableItem = SortableElement(({value}) => (
     <li style={{display:"inline-block"}}><Card text={value}/></li>
     //<li style={{display:"inline"}} tabIndex={0}>{value}</li>
-  ));
+));
 
 const SortableList = SortableContainer(({items}) => {
-return (
-  <ul style={{display:"inline-block"}}>
-    {items.map((value, index) => (
-      <SortableItem key={`item-${value}`} index={index} value={value} />
-    ))}
-  </ul>
-);
+    return (
+        <ul style={{display:"inline-block"}}>
+            {items.map((value, index) => (
+                <SortableItem key={`item-${value}`} index={index} value={value} />
+            ))}
+        </ul>
+    );
 });
 
 class SortableComponent extends Component {
-state = {
-  items: ['A', 'B', 'C', 'D', 'E'],
-};
-onSortEnd = ({oldIndex, newIndex}) => {
-  this.setState(({items}) => ({
-    items: arrayMove(items, oldIndex, newIndex),
-  }));
-};
-render() {
-  return <SortableList axis="x" items={this.state.items} onSortEnd={this.onSortEnd} />;
+    constructor(props) {
+        super(props);
+        this.state = {
+            items: ['A', 'B', 'C', 'D', 'E'],
+        };
+    }
+
+    onSortEnd = ({oldIndex, newIndex}) => {
+        this.setState(({items}) => ({
+            items: arrayMove(items, oldIndex, newIndex),
+        }));
+    };
+    
+    render() {
+        return <SortableList axis="x" items={this.state.items} onSortEnd={this.onSortEnd} />;
+    }
 }
-}
+
 export class TicTacToeBoard extends React.Component {
     get activePlayer() {
         return this.props.ctx.currentPlayer;
@@ -50,14 +57,34 @@ export class TicTacToeBoard extends React.Component {
         return this.playerId == this.activePlayer;
     }
 
-    get visibleCards() {
+    get cardDisplays() {
         const {ctx, G} = this.props;
-        const common = G.drawPiles.map((pile) => pile.currentLetter);
+        const common = G.drawPiles.map((pile) => <CardDisplay
+            card={pile.currentLetter}
+            onClick={this.handleSelectCard(pile.currentLetter)}
+            player={{name: 'Extra'}}
+            playerInfo={{activeLetterIndex: -1, letters: []}}
+        />);
         const otherPlayers = Object.keys(G.players)
             .filter((key) => `${key}` !== this.playerId)
-            .map((key) => G.players[key].letters[G.players[key].activeLetterIndex]);
+            .map((key) => {
+                let card = G.players[key].letters[G.players[key].activeLetterIndex];
+                return <CardDisplay
+                    card={card}
+                    onClick={this.handleSelectCard(card)}
+                    player={{name: key}}
+                    playerInfo={this.getPlayerInfo(key)}
+                />;
+            });
 
-        return [Deck.WILD, ...common, ...otherPlayers];
+        const wild = <CardDisplay
+            card={Deck.WILD}
+            onClick={this.handleSelectCard(Deck.WILD)}
+            player={{name: 'Extra'}}
+            playerInfo={{activeLetterIndex: -1, letters: []}}
+        />;
+
+        return [wild, ...common, ...otherPlayers];
     }
 
     handleDeselectCard = (card) => () => {
@@ -89,6 +116,17 @@ export class TicTacToeBoard extends React.Component {
         ));
     }
 
+    getPlayerInfo = (playerId) => {
+        const {players} = this.props.G;
+
+        return playerId >= players.length || !players[playerId]
+            ? {
+                activeLetterIndex: -1,
+                letters: [],
+            }
+            : players[playerId];
+    }
+
     render() {
         const {ctx, G} = this.props;
         const {
@@ -97,17 +135,17 @@ export class TicTacToeBoard extends React.Component {
             handleDeselectCard,
             handleNextLetter,
             handlePass,
-            handleSelectCard,
             playerId,
             submitClue,
-            visibleCards,
         } = this;
 
         return <div style={{display: 'flex'}}>
             <div style={{flex: '3 1 0'}}>
                 <div>
                     <div>Visible cards</div>
-                    {visibleCards.map((card) => <LjCard onClick={handleSelectCard(card)}>{card.letter}</LjCard>)}
+                    <div style={{display: 'flex'}}>
+                        {this.cardDisplays}
+                    </div>
                 </div>
                 <div>
                     <div>Your cards</div>
@@ -162,6 +200,22 @@ export class TicTacToeBoard extends React.Component {
         </div>;
     }
 }
+
+class CardDisplay extends React.Component {
+    render() {
+        const {card, onClick, player, playerInfo} = this.props;
+        return <div style={{textAlign: 'center'}}>
+            <div>{player.name}</div>
+            <div>
+                <LjCard onClick={onClick}>{card.letter}</LjCard>
+            </div>
+            <div>
+                {playerInfo.activeLetterIndex + 1}/{playerInfo.letters.length}
+            </div>
+        </div>;
+    }
+}
+
 class Hand extends React.Component {
     constructor(props) {
       super();
@@ -205,7 +259,7 @@ class Hand extends React.Component {
       )
     }
   }
-  
+
   class Card extends React.Component{
     constructor(props) {
       super();
