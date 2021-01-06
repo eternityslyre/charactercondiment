@@ -30,9 +30,17 @@ export const TicTacToe = {
         let drawPiles = [];
         let drawPileSpecs = getDrawPileSpecs(NUM_PLAYERS);
         drawPileSpecs.forEach((drawPile) => {
-            let {card, newDeck} = Deck.draw(deck);
-            deck = newDeck;
-            drawPiles.push({currentLetter: card, cardsLeft: drawPile - 1});
+            let letters = [];
+            for (let i = 0; i < drawPile; i++) {
+                let {card, newDeck} = Deck.draw(deck);
+                deck = newDeck;
+                letters.push(card);
+            }
+            let extra = {
+                activeLetterIndex: 0,
+                letters,
+            };
+            drawPiles.push(extra);
         });
 
         // Deal randomized 5-card hand to each player

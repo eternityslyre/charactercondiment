@@ -60,10 +60,10 @@ export class TicTacToeBoard extends React.Component {
         const {ctx, G} = this.props;
 
         const common = G.drawPiles.map((pile) => <CardDisplay
-                card={pile.currentLetter}
-                onClick={this.handleSelectCard(pile.currentLetter)}
+                card={pile.letters[pile.activeLetterIndex]}
+                onClick={this.handleSelectCard(pile.letters[pile.activeLetterIndex])}
                 player={{name: 'Extra'}}
-                playerInfo={{activeLetterIndex: -1, letters: []}}
+                playerInfo={pile}
             />
         );
 
@@ -206,7 +206,7 @@ export class TicTacToeBoard extends React.Component {
 class CardDisplay extends React.Component {
     render() {
         const {card, onClick, player, playerInfo} = this.props;
-        return <div style={{textAlign: 'center'}}>
+        return <div style={{textAlign: 'center', padding: '4px'}}>
             <div>{player.name}</div>
             <div>
                 <LjCard onClick={onClick}>{card.letter}</LjCard>
